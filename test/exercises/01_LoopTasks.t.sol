@@ -121,9 +121,7 @@ contract LoopTasksTest is Test {
 
         stable.pause();
 
-        vm.expectRevert(
-            abi.encodeWithSelector(Pausable.EnforcedPause.selector)
-        );
+        vm.expectRevert(abi.encodeWithSelector(Pausable.EnforcedPause.selector));
 
         vm.prank(alice);
         stable.transfer(attacker, 1e6);
@@ -144,9 +142,7 @@ contract LoopTasksTest is Test {
 
         stable.pause();
 
-        vm.expectRevert(
-            abi.encodeWithSelector(Pausable.EnforcedPause.selector)
-        );
+        vm.expectRevert(abi.encodeWithSelector(Pausable.EnforcedPause.selector));
 
         vm.prank(alice);
         vault.redeem(amount);

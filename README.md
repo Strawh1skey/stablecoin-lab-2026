@@ -9,6 +9,68 @@ The core claim, up front:
 
 ---
 
+## Student Submission Summary
+
+This repository contains my completed Tier 1 work for Lab 1, covering Ex0 through Ex6. The implementation follows the lab's two stablecoin designs: a 1:1 fiat-collateralized mint/redeem loop and an over-collateralized vault with liquidation.
+
+### Architecture
+
+![Stablecoin architecture](docs/stablecoin-architecture.svg)
+
+Editable draw.io source: [`docs/stablecoin-architecture.drawio`](docs/stablecoin-architecture.drawio)
+
+The core flow is:
+
+1. A user obtains mUSDC and approves the `Vault` to transfer it.
+2. `Vault.deposit(amount)` transfers mUSDC into the vault and mints the same number of sUSD units to the user.
+3. `Vault.redeem(amount)` burns the user's sUSD and returns the same amount of mUSDC.
+4. The `Vault` therefore needs `MINTER_ROLE` on `SimpleStablecoin`, but this also exposes a permission-design risk because the same role can burn balances.
+5. The main safety property is `totalCollateral() >= totalSupply()`. Ex3 demonstrates that a compromised minting permission can break this property without changing contract code.
+
+### Completed Tier 1 exercises
+
+| Exercise | Work completed |
+|---|---|
+| Ex0 | Foundry environment verified and core tests passing |
+| Ex1 | Ran the full faucet -> approve -> deposit -> redeem loop on Anvil |
+| Ex2 | Added tests for exact supply growth and the 6-vs-18-decimal trap |
+| Ex3 | Demonstrated a permission-driven depeg by granting `MINTER_ROLE` to an attacker and minting unbacked sUSD |
+| Ex4 | Added permission, pause, redemption, and arbitrary-burn tests |
+| Ex5 | Implemented decimal conversion, 150% mint/withdraw constraints, and liquidation below 120% with a 10% bonus |
+| Ex6 | Implemented randomized redemption handling and system invariants |
+
+### Key invariants and security observations
+
+The main 1:1 backing invariant used in the lab is:
+
+```solidity
+vault.totalCollateral() >= stable.totalSupply()
+```
+
+The invariant is necessary but not sufficient for a stable price. A system can remain fully collateralized while still losing its practical $1 redemption guarantee if redemptions are paused or the off-chain redemption rail fails. The exercises therefore separate two classes of failure: solvency failures, where backing is insufficient, and liquidity failures, where backing may exist but cannot be redeemed.
+
+For the over-collateralized vault, collateral value is normalized from 18-decimal mWETH and an 8-decimal price feed into 6-decimal sUSD units:
+
+```solidity
+collateralValue = amount * collateralPrice() / 1e20;
+```
+
+Minting and collateral withdrawal must leave the position at or above 150%. Positions below 120% can be liquidated, and the liquidator receives a 10% collateral bonus, capped by the collateral actually available.
+
+### Verification
+
+The Tier 1 implementation is checked with:
+
+```bash
+make test
+rm -rf cache/invariant
+make exercise
+```
+
+`make test` verifies the core contracts, while `make exercise` is the acceptance command for the Ex2, Ex4, Ex5, and Ex6 work.
+
+---
+
 ## 1. Setup
 
 Pick the track that matches your machine. **Everything after this section is identical for everyone.**

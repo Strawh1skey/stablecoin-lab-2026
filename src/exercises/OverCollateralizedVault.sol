@@ -180,12 +180,9 @@ contract OverCollateralizedVault {
 
         uint256 debt = debtOf[user];
 
-        uint256 valueToSeize =
-            debt * (RATIO_PRECISION + LIQUIDATION_BONUS)
-                / RATIO_PRECISION;
+        uint256 valueToSeize = debt * (RATIO_PRECISION + LIQUIDATION_BONUS) / RATIO_PRECISION;
 
-        uint256 collateralToSeize =
-            valueToSeize * 1e20 / collateralPrice();
+        uint256 collateralToSeize = valueToSeize * 1e20 / collateralPrice();
 
         if (collateralToSeize > collateralOf[user]) {
             collateralToSeize = collateralOf[user];
@@ -198,11 +195,6 @@ contract OverCollateralizedVault {
 
         collateral.safeTransfer(msg.sender, collateralToSeize);
 
-        emit Liquidated(
-            user,
-            msg.sender,
-            debt,
-            collateralToSeize
-        );
+        emit Liquidated(user, msg.sender, debt, collateralToSeize);
     }
 }

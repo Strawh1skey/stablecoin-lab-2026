@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#333"/></marker>
+    <style>
+      .box{stroke:#333;stroke-width:2;rx:14;ry:14}.t{font-family:Arial,sans-serif;fill:#222;text-anchor:middle}.h{font-size:20px;font-weight:700}.b{font-size:16px}.s{font-size:14px}.edge{stroke:#333;stroke-width:2;fill:none;marker-end:url(#arrow)}.dash{stroke-dasharray:7 6}.group{fill:none;stroke:#888;stroke-width:2;stroke-dasharray:8 6;rx:18;ry:18}.glabel{font-family:Arial,sans-serif;font-size:18px;font-weight:700;fill:#333}.label{font-family:Arial,sans-serif;font-size:14px;fill:#333;text-anchor:middle}.title{font-family:Arial,sans-serif;font-size:28px;font-weight:700;fill:#222;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1400" height="900" fill="white"/>
+  <text x="700" y="48" class="title">Stablecoin Lab Architecture</text>
+  <rect x="80" y="80" width="1240" height="430" class="group"/>
+  <text x="105" y="112" class="glabel">Core 1:1 mint / redeem loop</text>
+
+  <rect x="570" y="130" width="260" height="80" class="box" fill="#f5f5f5"/>
+  <text x="700" y="160" class="t h">User</text><text x="700" y="188" class="t b">holds mUSDC / sUSD</text>
+
+  <rect x="150" y="310" width="260" height="100" class="box" fill="#dae8fc"/>
+  <text x="280" y="342" class="t h">MockUSDC</text><text x="280" y="370" class="t b">Collateral token</text><text x="280" y="394" class="t s">6 decimals</text>
+
+  <rect x="570" y="300" width="260" height="120" class="box" fill="#fff2cc"/>
+  <text x="700" y="335" class="t h">Vault</text><text x="700" y="365" class="t b">deposit / redeem</text><text x="700" y="392" class="t s">holds collateral</text>
+
+  <rect x="990" y="290" width="270" height="140" class="box" fill="#d5e8d4"/>
+  <text x="1125" y="322" class="t h">SimpleStablecoin</text><text x="1125" y="350" class="t b">sUSD ERC-20</text><text x="1125" y="377" class="t s">6 decimals</text><text x="1125" y="403" class="t s">MINTER_ROLE / PAUSER_ROLE</text>
+
+  <path d="M 595 210 C 500 240, 390 260, 315 310" class="edge"/><text x="420" y="245" class="label">approve(Vault, amount)</text>
+  <path d="M 680 210 L 680 300" class="edge"/><text x="625" y="260" class="label">deposit(amount)</text>
+  <path d="M 720 300 L 720 210" class="edge dash"/><text x="785" y="250" class="label">redeem(amount)</text>
+  <path d="M 570 350 L 410 350" class="edge"/><text x="490" y="338" class="label">transferFrom(User → Vault)</text>
+  <path d="M 830 335 L 990 335" class="edge"/><text x="910" y="315" class="label">mint(User, amount)</text><text x="910" y="333" class="label">MINTER_ROLE</text>
+  <path d="M 825 385 L 990 385" class="edge dash"/><text x="910" y="405" class="label">burn(User, amount)</text><text x="910" y="423" class="label">MINTER_ROLE</text>
+  <path d="M 620 300 C 570 265, 585 230, 640 210" class="edge dash"/><text x="545" y="250" class="label">return collateral</text>
+
+  <rect x="430" y="440" width="540" height="55" class="box" fill="#f8cecc"/>
+  <text x="700" y="463" class="t b" font-weight="700">Core safety property: totalCollateral() ≥ totalSupply()</text>
+  <text x="700" y="484" class="t s">Necessary for solvency, but not sufficient if redemption is unavailable</text>
+
+  <rect x="80" y="550" width="1240" height="250" class="group"/>
+  <text x="105" y="582" class="glabel">Ex5 extension: over-collateralized vault</text>
+
+  <rect x="160" y="615" width="220" height="80" class="box" fill="#dae8fc"/>
+  <text x="270" y="649" class="t h">MockWETH</text><text x="270" y="676" class="t s">18 decimals</text>
+  <rect x="160" y="705" width="220" height="80" class="box" fill="#e1d5e7"/>
+  <text x="270" y="739" class="t h">MockPriceFeed</text><text x="270" y="766" class="t s">8 decimals</text>
+  <rect x="650" y="640" width="320" height="120" class="box" fill="#fff2cc"/>
+  <text x="810" y="671" class="t h">OverCollateralizedVault</text><text x="810" y="698" class="t s">≥150% to mint / withdraw</text><text x="810" y="721" class="t s">&lt;120% can be liquidated</text><text x="810" y="744" class="t s">10% liquidation bonus</text>
+  <rect x="1110" y="660" width="150" height="80" class="box" fill="#d5e8d4"/>
+  <text x="1185" y="695" class="t h">sUSD</text><text x="1185" y="722" class="t s">6 decimals</text>
+
+  <path d="M 380 655 L 650 680" class="edge"/><text x="510" y="648" class="label">collateral</text>
+  <path d="M 380 745 L 650 720" class="edge"/><text x="515" y="756" class="label">price</text>
+  <path d="M 970 700 L 1110 700" class="edge"/><text x="1040" y="684" class="label">mint / burn</text>
+</svg>
